@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#075E54">
+<title>Notes</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#075E54}
+
+#upload-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#f0f2f5;padding:32px}
+.up-icon{font-size:68px;margin-bottom:20px}
+.up-h{font-size:22px;font-weight:700;color:#111;margin-bottom:8px}
+.up-s{font-size:14px;color:#667781;text-align:center;line-height:1.6;margin-bottom:36px;max-width:260px}
+#ubtn{background:#075E54;color:#fff;border:none;padding:14px 32px;border-radius:28px;font-size:16px;font-weight:600;cursor:pointer;width:100%;max-width:260px}
+#ubtn:active{opacity:.85}
+#fi{display:none}
+#uerr{color:#e53935;font-size:13px;margin-top:12px;text-align:center;display:none}
+
+#loading-screen{display:none;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#f0f2f5}
+.ld-i{font-size:56px;margin-bottom:18px}
+.ld-h{font-size:18px;font-weight:600;color:#111;margin-bottom:4px}
+.ld-s{font-size:13px;color:#667781;margin-bottom:18px}
+#lpct{font-size:34px;font-weight:700;color:#075E54;margin-bottom:10px}
+#lbw{width:200px;height:5px;background:#e0e0e0;border-radius:3px;overflow:hidden}
+#lb{height:100%;background:#25D366;border-radius:3px;width:0;transition:width .12s}
+
+#chat-screen{display:none;flex-direction:column;height:100vh}
+#nh,#sh{background:#075E54;height:56px;display:flex;align-items:center;padding:0 4px;gap:6px;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+#sh{display:none}
+#sh.on{display:flex}
+.hb{background:none;border:none;color:#fff;width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:50%;cursor:pointer;flex-shrink:0;font-size:20px}
+.hb:active{background:rgba(255,255,255,.18)}
+#av{width:38px;height:38px;border-radius:50%;background:#128C7E;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:700;flex-shrink:0}
+#hi{flex:1;min-width:0}
+#hn{color:#fff;font-size:16px;font-weight:600}
+#hs{color:rgba(255,255,255,.75);font-size:12px}
+#si{flex:1;background:rgba(255,255,255,.15);border:none;border-radius:20px;color:#fff;font-size:15px;padding:7px 14px;outline:none}
+#si::placeholder{color:rgba(255,255,255,.6)}
+#scbar{background:#128C7E;color:#fff;font-size:12px;padding:3px 14px;flex-shrink:0;display:none;line-height:22px}
+
+/* Virtual scroller */
+#vp{flex:1;overflow-y:auto;background:#ece5dd;position:relative;-webkit-overflow-scrolling:touch}
+#vp::-webkit-scrollbar{display:none}
+#spacer{position:absolute;top:0;left:0;width:1px;pointer-events:none}
+#vlist{position:absolute;top:0;left:0;right:0;will-change:transform}
+
+.ds{display:flex;justify-content:center;padding:12px 0 4px}
+.dc{background:rgba(225,245,254,.93);color:#546e7a;font-size:11.5px;padding:4px 12px;border-radius:8px;box-shadow:0 1px 2px rgba(0,0,0,.12);font-weight:500}
+.br{display:flex;margin-bottom:1px;padding:0 8px}
+.br.r{justify-content:flex-end}
+.br.l{justify-content:flex-start}
+.b{max-width:78%;padding:6px 9px 3px;font-size:14px;line-height:1.45;word-break:break-word;white-space:pre-wrap;position:relative;box-shadow:0 1px 1px rgba(0,0,0,.1)}
+.b.r{background:#dcf8c6;border-radius:8px 2px 8px 8px;color:#111}
+.b.r::after{content:'';position:absolute;top:0;right:-7px;border-left:8px solid #dcf8c6;border-bottom:8px solid transparent}
+.b.l{background:#fff;border-radius:2px 8px 8px 8px;color:#111}
+.b.l::before{content:'';position:absolute;top:0;left:-7px;border-right:8px solid #fff;border-bottom:8px solid transparent}
+.bt{font-size:11px;color:#999;text-align:right;margin-top:2px;display:flex;align-items:center;justify-content:flex-end;gap:2px}
+.tk{font-size:12px;color:#53bdeb}
+.mi{color:#888;font-style:italic;font-size:13px}
+
+#fab{position:fixed;right:14px;bottom:22px;width:46px;height:46px;border-radius:50%;background:#fff;border:none;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.2);display:none;align-items:center;justify-content:center;font-size:22px;color:#075E54;z-index:100}
+#fab.on{display:flex}
+
+#cmod{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.5);align-items:flex-end}
+#cmod.on{display:flex}
+#csheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:82vh;display:flex;flex-direction:column}
+.sh2{width:36px;height:4px;background:#ddd;border-radius:2px;margin:10px auto 0}
+.chdr{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid #f0f0f0}
+.chdr h3{font-size:17px;font-weight:700;color:#111}
+.chdr button{background:none;border:none;font-size:26px;color:#aaa;cursor:pointer}
+.mnav{display:flex;align-items:center;justify-content:space-between;padding:8px 16px 4px}
+.mnav button{background:none;border:none;font-size:28px;color:#075E54;cursor:pointer;padding:2px 12px;border-radius:8px}
+.mnav button:active{background:#f0f0f0}
+.mnav span{font-size:15px;font-weight:600;color:#111}
+.cgrid{display:grid;grid-template-columns:repeat(7,1fr);padding:0 10px 6px;gap:1px}
+.cdn{text-align:center;font-size:11px;color:#667781;font-weight:600;padding:4px 0}
+.cd{text-align:center;font-size:13px;border-radius:50%;color:#ccc;width:36px;height:36px;display:flex;align-items:center;justify-content:center;margin:2px auto}
+.cd.hm{color:#075E54;font-weight:700;background:#e8f5e9;cursor:pointer}
+.cd.hm:active{background:#c8e6c9}
+.cd.td{border:2px solid #25D366}
+.dl-t{font-size:11.5px;color:#667781;font-weight:600;padding:6px 20px 2px;text-transform:uppercase;letter-spacing:.5px;border-top:1px solid #f0f0f0}
+#dl{overflow-y:auto;flex:1}
+.di{display:flex;align-items:center;padding:12px 20px;border-bottom:1px solid #f5f5f5;cursor:pointer}
+.di:active{background:#f5f5f5}
+.di-d{font-size:15px;color:#111;font-weight:500}
+.di-w{font-size:12px;color:#667781;margin-top:1px}
+.di-a{color:#ccc;font-size:20px;margin-left:auto}
+</style>
+</head>
+<body>
+
+<div id="upload-screen">
+  <div class="up-icon">💬</div>
+  <div class="up-h">View Chat</div>
+  <div class="up-s">Upload your WhatsApp exported .txt chat file</div>
+  <button id="ubtn">📂 Choose File</button>
+  <input id="fi" type="file" accept=".txt">
+  <div id="uerr"></div>
+</div>
+
+<div id="loading-screen">
+  <div class="ld-i">💬</div>
+  <div class="ld-h">Loading memories</div>
+  <div class="ld-s">Please wait...</div>
+  <div id="lpct">0%</div>
+  <div id="lbw"><div id="lb"></div></div>
+</div>
+
+<div id="chat-screen">
+  <div id="nh">
+    <button class="hb" id="bbtn">←</button>
+    <div id="av">K</div>
+    <div id="hi"><div id="hn">Kanna ❤️</div><div id="hs">loading...</div></div>
+    <button class="hb" id="sbtn">🔍</button>
+    <button class="hb" id="cbtn">📅</button>
+  </div>
+  <div id="sh">
+    <button class="hb" id="sbbtn">←</button>
+    <input id="si" type="search" placeholder="Search messages..." autocomplete="off">
+    <button class="hb" id="sxbtn" style="display:none">✕</button>
+  </div>
+  <div id="scbar"></div>
+  <div id="vp">
+    <div id="spacer"></div>
+    <div id="vlist"></div>
+  </div>
+  <button id="fab">↓</button>
+</div>
+
+<div id="cmod">
+  <div id="csheet" onclick="event.stopPropagation()">
+    <div class="sh2"></div>
+    <div class="chdr"><h3>Jump to Date</h3><button onclick="closeCal()">×</button></div>
+    <div class="mnav">
+      <button id="mprev">‹</button>
+      <span id="mlbl"></span>
+      <button id="mnext">›</button>
+    </div>
+    <div class="cgrid">
+      <div class="cdn">S</div><div class="cdn">M</div><div class="cdn">T</div>
+      <div class="cdn">W</div><div class="cdn">T</div><div class="cdn">F</div><div class="cdn">S</div>
+      <div id="cdw" style="display:contents"></div>
+    </div>
+    <div class="dl-t">All Dates</div>
+    <div id="dl"></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+const HER='.', HIM='Kanna \u2764\uFE0F';
+const RE=/^(\d{1,2}\/\d{1,2}\/\d{2,4}),\s+(\d{1,2}:\d{2}\s*(?:[aApP][mM])?)\s*[-\u2013]\s*(.+?):\s(.+)$/;
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const $=id=>document.getElementById(id);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+// ── State ──────────────────────────────────────────────────────────────────
+let allMsgs=[], allDates=[], dateSet=new Set();
+let flat=[];        // current flat list (all or search results)
+let flatAll=[];     // always all messages flat
+let db=null, srchTimer=null, isSearch=false;
+let calY=new Date().getFullYear(), calM=new Date().getMonth();
+
+// ── Virtual scroller state ─────────────────────────────────────────────────
+// We estimate item heights and render only visible window + buffer
+const SEP_H = 44;   // date separator height
+const MSG_H = 52;   // average message height (estimated)
+const BUFFER = 15;  // items to render above/below viewport
+let itemHeights = [];  // cached measured heights
+let itemOffsets = [];  // cumulative offsets
+let totalH = 0;
+let lastScrollTop = -1;
+let rafId = null;
+
+// ── DB ─────────────────────────────────────────────────────────────────────
+function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open('KV4',1);r.onupgradeneeded=e=>e.target.result.createObjectStore('d');r.onsuccess=e=>{db=e.target.result;res()};r.onerror=rej})}
+const txs=(m)=>db.transaction('d',m).objectStore('d');
+function dbGet(k){return new Promise(r=>{const q=txs('readonly').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)})}
+function dbSet(k,v){return new Promise(r=>{const q=txs('readwrite').put(v,k);q.onsuccess=r;q.onerror=r})}
+
+function show(id){['upload-screen','loading-screen','chat-screen'].forEach(s=>$(s).style.display=s===id?'flex':'none')}
+function setPct(p){$('lpct').textContent=p+'%';$('lb').style.width=p+'%'}
+
+// ── Parser ─────────────────────────────────────────────────────────────────
+async function processFile(text){
+  show('loading-screen');setPct(5);
+  const lines=text.split('\n');const N=lines.length;
+  const msgs=[];let cur=null;
+  for(let i=0;i<N;i++){
+    const line=lines[i].trim();if(!line)continue;
+    const m=line.match(RE);
+    if(m){if(cur)msgs.push(cur);cur={date:m[1],time:m[2].trim(),sender:m[3].trim(),text:m[4].trim()}}
+    else if(cur)cur.text+='\n'+line;
+    if(i%20000===0){setPct(5+Math.round((i/N)*60));await sleep(0)}
+  }
+  if(cur)msgs.push(cur);
+  setPct(70);await sleep(0);
+  await dbSet('msgs',msgs);await dbSet('ok',1);
+  setPct(90);await sleep(0);
+  initData(msgs);
+  setPct(100);await sleep(60);
+  show('chat-screen');
+  await sleep(50);
+  jumpToIndex(flat.length-1);
+}
+
+// ── Build flat list ────────────────────────────────────────────────────────
+function buildFlat(msgs){
+  const items=[];let last='';
+  for(const m of msgs){
+    if(m.date!==last){last=m.date;items.push({type:'sep',date:m.date})}
+    items.push({type:'msg',...m});
+  }
+  return items;
+}
+
+function initData(msgs){
+  allMsgs=msgs;
+  flatAll=buildFlat(msgs);
+  flat=flatAll;
+  const seen=new Set();allDates=[];dateSet=new Set();
+  for(const m of msgs){if(!seen.has(m.date)){seen.add(m.date);allDates.push(m.date);dateSet.add(m.date)}}
+  $('hs').textContent=msgs.length.toLocaleString('en-IN')+' messages';
+  buildOffsets(flat);
+}
+
+// ── Virtual scroller ───────────────────────────────────────────────────────
+function estimateH(item){
+  if(item.type==='sep') return SEP_H;
+  // rough estimate based on text length
+  const lines = Math.ceil(item.text.length / 35);
+  return Math.max(48, 30 + lines * 20);
+}
+
+function buildOffsets(items){
+  itemHeights=new Array(items.length);
+  itemOffsets=new Array(items.length+1);
+  itemOffsets[0]=8;
+  for(let i=0;i<items.length;i++){
+    itemHeights[i]=estimateH(items[i]);
+    itemOffsets[i+1]=itemOffsets[i]+itemHeights[i]+2;
+  }
+  totalH=itemOffsets[items.length]+16;
+  $('spacer').style.height=totalH+'px';
+}
+
+function findFirstVisible(scrollTop){
+  // binary search for first item whose bottom > scrollTop
+  let lo=0,hi=flat.length-1;
+  while(lo<hi){
+    const mid=(lo+hi)>>1;
+    if(itemOffsets[mid+1]<scrollTop)lo=mid+1;
+    else hi=mid;
+  }
+  return lo;
+}
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}
+function isMedia(t){return /omitted|<attached>/i.test(t)}
+function fmtChip(d){
+  const p=d.split('/');if(p.length<3)return d;
+  const[dd,mm,yy]=p;const yyyy=yy.length===2?'20'+yy:yy;
+  const dt=new Date(+yyyy,+mm-1,+dd);if(isNaN(dt))return d;
+  const t=new Date(),y=new Date();y.setDate(t.getDate()-1);
+  if(dt.toDateString()===t.toDateString())return'TODAY';
+  if(dt.toDateString()===y.toDateString())return'YESTERDAY';
+  return dt.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}).toUpperCase();
+}
+
+function renderWindow(){
+  const vp=$('vp');
+  const scrollTop=vp.scrollTop;
+  const vpH=vp.clientHeight;
+  if(Math.abs(scrollTop-lastScrollTop)<2)return;
+  lastScrollTop=scrollTop;
+
+  const first=Math.max(0,findFirstVisible(scrollTop)-BUFFER);
+  const last2=Math.min(flat.length-1,findFirstVisible(scrollTop+vpH)+BUFFER);
+
+  let html='';
+  for(let i=first;i<=last2;i++){
+    const item=flat[i];
+    const top=itemOffsets[i];
+    const style=`position:absolute;top:${top}px;left:0;right:0;padding:0 8px`;
+    if(item.type==='sep'){
+      html+=`<div style="${style};display:flex;justify-content:center;padding-top:12px;padding-bottom:4px"><span class="dc">${fmtChip(item.date)}</span></div>`;
+    }else{
+      const isHer=item.sender===HER;
+      const txt=isMedia(item.text)?`<span class="mi">📎 ${esc(item.text)}</span>`:esc(item.text);
+      const tks=isHer?'<span class="tk">✓✓</span>':'';
+      html+=`<div style="${style}"><div class="br ${isHer?'r':'l'}"><div class="b ${isHer?'r':'l'}">${txt}<div class="bt">${item.time}${tks}</div></div></div></div>`;
+    }
+  }
+  $('vlist').innerHTML=html;
+}
+
+function onScroll(){
+  if(rafId)cancelAnimationFrame(rafId);
+  rafId=requestAnimationFrame(renderWindow);
+  // FAB
+  const vp=$('vp');
+  const near=vp.scrollTop+vp.clientHeight>=vp.scrollHeight-150;
+  $('fab').classList.toggle('on',!near);
+}
+
+// ── Jump to index (instant) ────────────────────────────────────────────────
+function jumpToIndex(idx){
+  if(idx<0||idx>=flat.length)return;
+  const vp=$('vp');
+  vp.scrollTop=itemOffsets[idx];
+  lastScrollTop=-1;
+  renderWindow();
+}
+
+function jumpToDate(dateStr){
+  closeCal();
+  if(isSearch)closeSearch();
+  // find in flatAll
+  const idx=flatAll.findIndex(it=>it.type==='sep'&&it.date===dateStr);
+  if(idx>=0){
+    flat=flatAll;
+    buildOffsets(flat);
+    jumpToIndex(idx);
+  }
+}
+
+function scrollBottom(){
+  flat=flatAll;
+  buildOffsets(flat);
+  jumpToIndex(flat.length-1);
+}
+
+// ── Search ─────────────────────────────────────────────────────────────────
+function openSearch(){
+  isSearch=true;
+  $('nh').style.display='none';
+  $('sh').classList.add('on');
+  $('si').focus();
+}
+function closeSearch(){
+  isSearch=false;
+  $('nh').style.display='flex';
+  $('sh').classList.remove('on');
+  $('si').value='';
+  $('sxbtn').style.display='none';
+  $('scbar').style.display='none';
+  flat=flatAll;
+  buildOffsets(flat);
+  lastScrollTop=-1;
+  renderWindow();
+}
+
+$('si').addEventListener('input',function(){
+  clearTimeout(srchTimer);
+  const val=this.value.trim();
+  $('sxbtn').style.display=val?'flex':'none';
+  srchTimer=setTimeout(()=>{
+    if(!val){
+      flat=flatAll;$('scbar').style.display='none';
+    }else{
+      const q=val.toLowerCase();
+      const matched=allMsgs.filter(m=>m.text.toLowerCase().includes(q));
+      flat=buildFlat(matched);
+      $('scbar').textContent=matched.length.toLocaleString('en-IN')+' results';
+      $('scbar').style.display='block';
+    }
+    buildOffsets(flat);
+    lastScrollTop=-1;
+    renderWindow();
+  },350);
+});
+
+// ── Calendar ───────────────────────────────────────────────────────────────
+function parseDStr(d){const p=d.split('/');if(p.length<3)return null;const[dd,mm,yy]=p;const yyyy=yy.length===2?'20'+yy:yy;return new Date(+yyyy,+mm-1,+dd)}
+function buildCal(){
+  $('mlbl').textContent=MONTHS[calM]+' '+calY;
+  const first=new Date(calY,calM,1).getDay();
+  const days=new Date(calY,calM+1,0).getDate();
+  const today=new Date();
+  let html='';
+  for(let i=0;i<first;i++)html+='<div class="cd"></div>';
+  for(let d=1;d<=days;d++){
+    const dd=String(d).padStart(2,'0'),mm=String(calM+1).padStart(2,'0'),yy=String(calY).slice(2);
+    const ds=`${dd}/${mm}/${yy}`;
+    const hm=dateSet.has(ds);
+    const isTd=new Date(calY,calM,d).toDateString()===today.toDateString();
+    html+=`<div class="cd${hm?' hm':''}${isTd?' td':''}"${hm?` onclick="jumpToDate('${ds}')"`:''}>${d}</div>`;
+  }
+  $('cdw').innerHTML=html;
+}
+function buildDL(){
+  $('dl').innerHTML=allDates.map(d=>{
+    const dt=parseDStr(d);
+    const dl=dt?dt.toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}):d;
+    const dw=dt?dt.toLocaleDateString('en-IN',{weekday:'long'}):'';
+    return `<div class="di" onclick="jumpToDate('${d}')"><div><div class="di-d">${dl}</div><div class="di-w">${dw}</div></div><span class="di-a">›</span></div>`;
+  }).join('');
+}
+function openCal(){buildCal();buildDL();$('cmod').classList.add('on')}
+function closeCal(){$('cmod').classList.remove('on')}
+
+// ── Wire ───────────────────────────────────────────────────────────────────
+$('ubtn').onclick=()=>$('fi').click();
+$('fi').onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;
+  try{await processFile(await f.text())}
+  catch(err){$('uerr').textContent='Error reading file.';$('uerr').style.display='block';show('upload-screen')}
+  e.target.value='';
+};
+$('bbtn').onclick=()=>{if(confirm('Go back? Chat stays saved.'))show('upload-screen')};
+$('sbtn').onclick=openSearch;
+$('cbtn').onclick=openCal;
+$('sbbtn').onclick=closeSearch;
+$('sxbtn').onclick=()=>{$('si').value='';$('si').dispatchEvent(new Event('input'));$('si').focus()};
+$('fab').onclick=scrollBottom;
+$('mprev').onclick=()=>{calM--;if(calM<0){calM=11;calY--}buildCal()};
+$('mnext').onclick=()=>{calM++;if(calM>11){calM=0;calY++}buildCal()};
+$('cmod').onclick=e=>{if(e.target===$('cmod'))closeCal()};
+$('vp').addEventListener('scroll',onScroll,{passive:true});
+
+window.addEventListener('popstate',()=>{
+  if($('cmod').classList.contains('on')){closeCal();history.pushState(null,'');return}
+  if(isSearch){closeSearch();history.pushState(null,'')}
+});
+history.pushState(null,'');
+
+// ── Init ───────────────────────────────────────────────────────────────────
+async function init(){
+  try{['KanimaaDB','KanimaaDB2','KanimaaV3'].forEach(n=>indexedDB.deleteDatabase(n))}catch(e){}
+  try{await openDB()}catch(e){show('upload-screen');return}
+  const ok=await dbGet('ok');
+  if(ok){
+    const msgs=await dbGet('msgs');
+    if(msgs&&msgs.length){
+      show('loading-screen');setPct(50);
+      initData(msgs);
+      setPct(100);await sleep(60);
+      show('chat-screen');
+      await sleep(50);
+      buildOffsets(flat);
+      jumpToIndex(flat.length-1);
+      return;
+    }
+  }
+  show('upload-screen');
+}
+init();
+</script>
+</body>
+</html>
