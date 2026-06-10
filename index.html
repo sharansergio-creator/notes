@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +10,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#075E54;font-size:16px}
-
+ 
 #upload-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#f0f2f5;padding:32px}
 .up-icon{font-size:64px;margin-bottom:20px}
 .up-h{font-size:22px;font-weight:700;color:#111;margin-bottom:8px}
@@ -18,7 +19,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 #ubtn:active{opacity:.85}
 #fi{display:none}
 #uerr{color:#e53935;font-size:13px;margin-top:12px;text-align:center;display:none}
-
+ 
 #loading-screen{display:none;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#f0f2f5}
 .ld-i{font-size:56px;margin-bottom:18px}
 .ld-h{font-size:18px;font-weight:600;color:#111;margin-bottom:4px}
@@ -26,7 +27,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 #lpct{font-size:34px;font-weight:700;color:#075E54;margin-bottom:10px}
 #lbw{width:200px;height:5px;background:#e0e0e0;border-radius:3px;overflow:hidden}
 #lb{height:100%;background:#25D366;border-radius:3px;width:0;transition:width .12s}
-
+ 
 #chat-screen{display:none;flex-direction:column;height:100vh}
 #nh,#sh{background:#075E54;height:56px;display:flex;align-items:center;padding:0 4px;gap:4px;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,.25)}
 #sh{display:none}
@@ -40,15 +41,15 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 #si{flex:1;background:rgba(255,255,255,.15);border:none;border-radius:20px;color:#fff;font-size:15px;padding:8px 14px;outline:none;min-width:0}
 #si::placeholder{color:rgba(255,255,255,.6)}
 #scbar{background:#128C7E;color:#fff;font-size:12px;padding:4px 14px;flex-shrink:0;display:none}
-
+ 
 /* Scroll container — simple overflow scroll, NO virtual positioning */
 #vp{flex:1;overflow-y:auto;background:#ece5dd;-webkit-overflow-scrolling:touch;padding:6px 0 20px}
 #vp::-webkit-scrollbar{display:none}
-
+ 
 /* Date separator */
 .ds{display:flex;justify-content:center;padding:12px 8px 4px}
 .dc{background:rgba(225,245,254,.93);color:#546e7a;font-size:12px;padding:5px 12px;border-radius:8px;box-shadow:0 1px 2px rgba(0,0,0,.12);font-weight:500;white-space:nowrap}
-
+ 
 /* Bubbles — no absolute positioning, normal flow */
 .br{display:flex;margin-bottom:2px;padding:0 8px}
 .br.r{justify-content:flex-end}
@@ -61,10 +62,10 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .bt{font-size:11px;color:#999;text-align:right;margin-top:3px;display:flex;align-items:center;justify-content:flex-end;gap:3px;line-height:1.2}
 .tk{font-size:11px;color:#53bdeb}
 .mi{color:#888;font-style:italic;font-size:13px}
-
+ 
 #fab{position:fixed;right:14px;bottom:24px;width:46px;height:46px;border-radius:50%;background:#fff;border:none;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.2);display:none;align-items:center;justify-content:center;font-size:22px;color:#075E54;z-index:100}
 #fab.on{display:flex}
-
+ 
 /* Calendar modal */
 #cmod{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.5);align-items:flex-end}
 #cmod.on{display:flex}
@@ -93,7 +94,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 </style>
 </head>
 <body>
-
+ 
 <div id="upload-screen">
   <div class="up-icon">💬</div>
   <div class="up-h">View Chat</div>
@@ -102,7 +103,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
   <input id="fi" type="file" accept=".txt">
   <div id="uerr"></div>
 </div>
-
+ 
 <div id="loading-screen">
   <div class="ld-i">💬</div>
   <div class="ld-h">Loading memories</div>
@@ -110,7 +111,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
   <div id="lpct">0%</div>
   <div id="lbw"><div id="lb"></div></div>
 </div>
-
+ 
 <div id="chat-screen">
   <div id="nh">
     <button class="hb" id="bbtn">←</button>
@@ -128,7 +129,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
   <div id="vp"></div>
   <button id="fab">↓</button>
 </div>
-
+ 
 <div id="cmod">
   <div id="csheet" onclick="event.stopPropagation()">
     <div class="sh2"></div>
@@ -147,7 +148,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     <div id="dl"></div>
   </div>
 </div>
-
+ 
 <script>
 'use strict';
 const HER='.';
@@ -155,22 +156,22 @@ const RE=/^(\d{1,2}\/\d{1,2}\/\d{2,4}),\s+(\d{1,2}:\d{2}\s*(?:[aApP][mM])?)\s*[-
 const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const $=id=>document.getElementById(id);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-
+ 
 let allMsgs=[], allDates=[], dateSet=new Set();
 let db=null, srchTimer=null, isSearch=false;
 let calY=new Date().getFullYear(), calM=new Date().getMonth();
 // Map from dateStr -> DOM element id
 let dateElemIds={};
-
+ 
 // ── DB ─────────────────────────────────────────────────────────────────────
 function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open('KV5',1);r.onupgradeneeded=e=>e.target.result.createObjectStore('d');r.onsuccess=e=>{db=e.target.result;res()};r.onerror=rej})}
 function dbtx(m){return db.transaction('d',m).objectStore('d')}
 function dbGet(k){return new Promise(r=>{const q=dbtx('readonly').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)})}
 function dbSet(k,v){return new Promise(r=>{const q=dbtx('readwrite').put(v,k);q.onsuccess=r;q.onerror=r})}
-
+ 
 function show(id){['upload-screen','loading-screen','chat-screen'].forEach(s=>$(s).style.display=s===id?'flex':'none')}
 function setPct(p){$('lpct').textContent=p+'%';$('lb').style.width=p+'%'}
-
+ 
 // ── Parser ─────────────────────────────────────────────────────────────────
 async function processFile(text){
   show('loading-screen');setPct(5);
@@ -193,7 +194,7 @@ async function processFile(text){
   await renderAll(msgs);
   scrollBottom();
 }
-
+ 
 // ── Init data ──────────────────────────────────────────────────────────────
 function initData(msgs){
   allMsgs=msgs;
@@ -201,7 +202,7 @@ function initData(msgs){
   for(const m of msgs){if(!seen.has(m.date)){seen.add(m.date);allDates.push(m.date);dateSet.add(m.date)}}
   $('hs').textContent=msgs.length.toLocaleString('en-IN')+' messages';
 }
-
+ 
 // ── Render — normal DOM flow, no absolute positioning ────────────────────
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}
 function isMedia(t){return /omitted|<attached>/i.test(t)}
@@ -214,7 +215,7 @@ function fmtChip(d){
   if(dt.toDateString()===y.toDateString())return'YESTERDAY';
   return dt.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}).toUpperCase();
 }
-
+ 
 // Render in batches — appending chunks so page stays responsive
 async function renderAll(msgs){
   const vp=$('vp');
@@ -224,22 +225,22 @@ async function renderAll(msgs){
   let html='';
   let lastDate='';
   let dateCounter=0;
-
+ 
   for(let i=0;i<msgs.length;i++){
     const msg=msgs[i];
     const isHer=msg.sender===HER;
-
+ 
     if(msg.date!==lastDate){
       lastDate=msg.date;
       const eid='d'+dateCounter++;
       dateElemIds[msg.date]=eid;
       html+=`<div class="ds" id="${eid}"><span class="dc">${fmtChip(msg.date)}</span></div>`;
     }
-
+ 
     const txt=isMedia(msg.text)?`<span class="mi">📎 ${esc(msg.text)}</span>`:esc(msg.text);
     const tks=isHer?'<span class="tk">✓✓</span>':'';
     html+=`<div class="br ${isHer?'r':'l'}"><div class="b ${isHer?'r':'l'}">${txt}<div class="bt">${msg.time}${tks}</div></div></div>`;
-
+ 
     if((i+1)%BATCH===0){
       vp.insertAdjacentHTML('beforeend',html);
       html='';
@@ -248,28 +249,45 @@ async function renderAll(msgs){
   }
   if(html)vp.insertAdjacentHTML('beforeend',html);
 }
-
+ 
 // ── Jump to date — uses stored element IDs ────────────────────────────────
+function getOffsetInVp(el){
+  // Walk up the DOM summing offsetTop until we hit #vp or body
+  const vp=$('vp');
+  let top=0;
+  let cur=el;
+  while(cur&&cur!==vp){
+    top+=cur.offsetTop;
+    cur=cur.offsetParent;
+  }
+  return top;
+}
+ 
 function jumpToDate(dateStr){
   closeCal();
-  if(isSearch)closeSearch();
-  // Small delay to let any re-render settle
-  setTimeout(()=>{
+  const doJump=()=>{
     const eid=dateElemIds[dateStr];
     if(!eid)return;
     const el=document.getElementById(eid);
     if(!el)return;
     const vp=$('vp');
-    // scrollTop = element's offsetTop relative to vp
-    vp.scrollTop=el.offsetTop-6;
-  },100);
+    const pos=getOffsetInVp(el);
+    vp.scrollTop=Math.max(0,pos-8);
+  };
+  if(isSearch){
+    closeSearch();
+    // Wait for re-render to finish before jumping
+    setTimeout(doJump,600);
+  }else{
+    setTimeout(doJump,100);
+  }
 }
-
+ 
 function scrollBottom(){
   const vp=$('vp');
   vp.scrollTop=vp.scrollHeight;
 }
-
+ 
 // ── Search ─────────────────────────────────────────────────────────────────
 function openSearch(){
   isSearch=true;
@@ -286,7 +304,7 @@ function closeSearch(){
   $('scbar').style.display='none';
   renderAll(allMsgs).then(scrollBottom);
 }
-
+ 
 $('si').addEventListener('input',function(){
   clearTimeout(srchTimer);
   const val=this.value.trim();
@@ -304,13 +322,13 @@ $('si').addEventListener('input',function(){
     }
   },400);
 });
-
+ 
 // ── FAB ───────────────────────────────────────────────────────────────────
 $('vp').addEventListener('scroll',function(){
   const near=this.scrollTop+this.clientHeight>=this.scrollHeight-150;
   $('fab').classList.toggle('on',!near);
 },{passive:true});
-
+ 
 // ── Calendar ───────────────────────────────────────────────────────────────
 function parseDStr(d){
   const p=d.split('/');if(p.length<3)return null;
@@ -345,7 +363,7 @@ function buildDL(){
 }
 function openCal(){buildCal();buildDL();$('cmod').classList.add('on')}
 function closeCal(){$('cmod').classList.remove('on')}
-
+ 
 // ── Wire buttons ───────────────────────────────────────────────────────────
 $('ubtn').onclick=()=>$('fi').click();
 $('fi').onchange=async e=>{
@@ -364,13 +382,13 @@ $('fab').onclick=scrollBottom;
 $('mprev').onclick=()=>{calM--;if(calM<0){calM=11;calY--}buildCal()};
 $('mnext').onclick=()=>{calM++;if(calM>11){calM=0;calY++}buildCal()};
 $('cmod').onclick=e=>{if(e.target===$('cmod'))closeCal()};
-
+ 
 window.addEventListener('popstate',()=>{
   if($('cmod').classList.contains('on')){closeCal();history.pushState(null,'');return}
   if(isSearch){closeSearch();history.pushState(null,'')}
 });
 history.pushState(null,'');
-
+ 
 // ── Init ───────────────────────────────────────────────────────────────────
 async function init(){
   try{['KanimaaDB','KanimaaDB2','KanimaaV3','KV4'].forEach(n=>{try{indexedDB.deleteDatabase(n)}catch(e){}})}catch(e){}
